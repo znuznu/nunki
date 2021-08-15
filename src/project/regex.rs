@@ -2,7 +2,16 @@ use lazy_static::lazy_static;
 use regex::Regex;
 use std::borrow::Cow;
 
-pub fn extract_untracked_todo_content(line: &str) -> Option<&str> {
+// pub fn get_untracked_pattern<'a>(keywords: &'a [&'a str]) -> &'a str {
+//     let joined_keywords = keywords.join("|");
+
+//     return format!("^(.*)[{}][: ]? (.*)$", joined_keywords);
+// }
+
+pub fn extract_untracked_todo_content<'a>(
+    line: &'a str,
+    // keywords_pattern: &str,
+) -> Option<&'a str> {
     lazy_static! {
         static ref RE: Regex = Regex::new(r"^(.*)TODO[: ]? (.*)$").unwrap();
     }
