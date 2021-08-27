@@ -42,7 +42,7 @@ fn main() {
 
         let mode = value_t!(matches, "mode", Mode).unwrap();
 
-        let project: Project = Project::from(mode, &path, &[]);
+        let project: Project = Project::from(mode, &path);
 
         if let Err(e) = project.exec() {
             eprintln!("{}", e);

@@ -1,10 +1,10 @@
 use std::fmt;
 
 pub struct Todo {
-    id: Option<u32>,
-    file_path: String,
-    line: u32,
-    content: String,
+    pub id: Option<u32>,
+    pub file_path: String,
+    pub line: u32,
+    pub content: String,
 }
 
 impl Todo {
@@ -22,8 +22,8 @@ impl fmt::Display for Todo {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "id             - {:?} \nfile_path      - {} \nline           - {} \ncontent        - {}",
-            self.id, self.file_path, self.line, self.content
+            "{}\n{:?} - L{}\n{}",
+            self.file_path, self.id, self.line, self.content
         )
     }
 }
