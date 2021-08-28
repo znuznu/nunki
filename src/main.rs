@@ -1,10 +1,19 @@
+use crate::git::GitPlatform;
 use crate::project::{Mode, Project};
 use clap::{value_t, App, Arg};
 use std::path::Path;
 
+use token::{get_token, platform::Platform};
+
+mod git;
 mod project;
+mod token;
 
 fn main() {
+    let token = get_token(Platform::Github);
+
+    let git_platform = GitPlatform::new(&token);
+
     let matches = App::new("Nunki CLI")
         .version("0.1.0")
         .author("Arthur 'znu' F.")
@@ -42,7 +51,7 @@ fn main() {
 
         let mode = value_t!(matches, "mode", Mode).unwrap();
 
-        let project: Project = Project::from(mode, &path);
+        let project: Project = Project::from(mode, &path, git_platform);
 
         if let Err(e) = project.exec() {
             eprintln!("{}", e);

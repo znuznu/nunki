@@ -5,6 +5,8 @@ use std::io::Write;
 use todo::Todo;
 use walkdir::WalkDir;
 
+use crate::git::GitPlatform;
+
 use line_iterator::LineIterator;
 use std::fs::File;
 use std::io::{BufRead, BufReader, BufWriter};
@@ -28,18 +30,20 @@ arg_enum! {
 
 pub struct Project<'a> {
     mode: Mode,
-    entrypoint: &'a str, // keywords: &'a [&'a str],
+    entrypoint: &'a str,
+    git_platform: Box<dyn GitPlatform<'a>>,
 }
 
 impl<'a> Project<'a> {
     pub fn from<T: AsRef<str>>(
         mode: Mode,
-        entrypoint: &'a T, /* keywords: &'a [&str] */
+        entrypoint: &'a T,
+        git_platform: Box<dyn GitPlatform<'a>>,
     ) -> Self {
         Project {
             mode,
             entrypoint: entrypoint.as_ref(),
-            // keywords,
+            git_platform,
         }
     }
 
@@ -120,7 +124,6 @@ impl<'a> Project<'a> {
         Ok(())
     }
 
-    // FIXME probably gonna be messed up when the multi-threading is implemented later on ?
     fn prompt(&self, todo: Todo) -> Result<Answer> {
         print!(
             "Untracked todo found L{} in {} \nWould you like to open an issue for it on Github ? [y/N] ",
