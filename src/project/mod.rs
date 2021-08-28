@@ -47,10 +47,9 @@ impl<'a> Project<'a> {
         self.walk()
     }
 
-    /// Walk recursively through the provided path and find TODOs in each file.
+    /// Walk recursively through the provided path and treat TODOs in each file
+    /// depending on the mode.
     pub fn walk(&self) -> Result<()> {
-        let mut todos: Vec<Todo> = Vec::new();
-
         for entry in WalkDir::new(self.entrypoint)
             .into_iter()
             .filter_map(|entry| entry.ok())
@@ -59,42 +58,30 @@ impl<'a> Project<'a> {
                 continue;
             }
 
+            let entrypoint = entry.path().to_str().unwrap();
+
             match &self.mode {
-                Mode::Match => {
-                    let matches = self.match_file(entry.path().to_str().unwrap())?;
-                    todos.extend(matches);
-                }
-                Mode::Patch => self.patch_file(entry.path().to_str().unwrap())?,
+                Mode::Match => self.match_file(entrypoint)?,
+                Mode::Patch => self.patch_file(entrypoint)?,
             }
-        }
-
-        println!("Total {}", todos.len());
-
-        for todo in todos.into_iter() {
-            println!("\n{}", todo);
         }
 
         Ok(())
     }
 
-    pub fn match_file(&self, file_path: &str) -> Result<Vec<Todo>> {
+    pub fn match_file(&self, file_path: &str) -> Result<()> {
         let file = File::open(file_path)?;
         let reader = BufReader::new(file);
 
-        let mut todos: Vec<Todo> = Vec::new();
-        let mut line_count = 0;
-
-        for line in reader.lines() {
-            line_count += 1;
-
+        for (index, line) in reader.lines().enumerate() {
             if let Some(content) = regex::extract_untracked_todo_content(&line.unwrap()) {
                 let todo: Todo =
-                    Todo::from(None, file_path.to_string(), line_count, content.to_string());
-                todos.push(todo);
+                    Todo::from(None, file_path.to_string(), index + 1, content.to_string());
+                println!("{}\n", todo);
             }
         }
 
-        Ok(todos)
+        Ok(())
     }
 
     pub fn patch_file(&self, file_path: &str) -> Result<()> {
@@ -112,7 +99,6 @@ impl<'a> Project<'a> {
                 let todo: Todo =
                     Todo::from(None, file_path.to_string(), index + 1, content.to_string());
 
-                // Maybe put it below with the answer
                 println!();
 
                 match self.prompt(todo)? {
@@ -134,7 +120,7 @@ impl<'a> Project<'a> {
         Ok(())
     }
 
-    // FIXME probably gonna messed up when the multi-threading is implemented later on
+    // FIXME probably gonna be messed up when the multi-threading is implemented later on ?
     fn prompt(&self, todo: Todo) -> Result<Answer> {
         print!(
             "Untracked todo found L{} in {} \nWould you like to open an issue for it on Github ? [y/N] ",

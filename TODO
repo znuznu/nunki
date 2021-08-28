@@ -1,0 +1,4 @@
+[ ] Remove undesired characters (like */)
+[ ] Implements Github related part
+[ ] Implements multi-threading in order to read multiple files at the same time
+[ ] Keywords

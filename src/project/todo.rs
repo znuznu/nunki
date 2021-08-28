@@ -20,10 +20,6 @@ impl Todo {
 
 impl fmt::Display for Todo {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{}\n{:?} - L{}\n{}",
-            self.file_path, self.id, self.line, self.content
-        )
+        write!(f, "{}\nL{}\n{}", self.file_path, self.line, self.content)
     }
 }

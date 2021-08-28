@@ -13,9 +13,9 @@ fn main() {
             Arg::with_name("mode")
                 .short("m")
                 .help(
-                    "The execution mode.\n\nIf set to `match` (default): extract all untracked \
-                    todos of the project and print them, without affecting anything.\n\nIf \
-                    set to `patch`: extract all untracked todos and create an issue \
+                    "The execution mode.\n\nSet to `match`: extract all untracked \
+                    todos of the project and print them, without affecting anything.\n\nSet \
+                    to `patch`: extract all untracked todos and create an issue \
                     related to these todos on the remote Github repository. The issue # \
                     is then assigned directly in the source code and committed, ready to be \
                     pushed.",
@@ -30,7 +30,7 @@ fn main() {
         .arg(
             Arg::with_name("path")
                 .short("p")
-                .help("The source code entrypoint directory")
+                .help("The source code entrypoint (directory or file).")
                 .takes_value(true),
         )
         .get_matches();
