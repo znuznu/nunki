@@ -15,7 +15,7 @@ fn main() {
                 .help(
                     "The execution mode.\n\nIf set to `match` (default): extract all untracked \
                     todos of the project and print them, without affecting anything.\n\nIf \
-                    set to `track`: extract all untracked todos and create an issue \
+                    set to `patch`: extract all untracked todos and create an issue \
                     related to these todos on the remote Github repository. The issue # \
                     is then assigned directly in the source code and committed, ready to be \
                     pushed.",

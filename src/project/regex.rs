@@ -13,7 +13,7 @@ pub fn extract_untracked_todo_content<'a>(
     // keywords_pattern: &str,
 ) -> Option<&'a str> {
     lazy_static! {
-        static ref RE: Regex = Regex::new(r"^(.*)TODO[: ]? (.*)$").unwrap();
+        static ref RE: Regex = Regex::new(r"^(.*)TODO[: ]? (.*)(\n)?$").unwrap();
     }
 
     match RE.captures(line) {
@@ -26,7 +26,7 @@ pub fn extract_untracked_todo_content<'a>(
 pub fn replace_untracked_todo(line: &str, id: u32) -> Cow<'_, str> {
     lazy_static! {
         static ref RE: Regex =
-            Regex::new(r"^(?P<prefix>.*)(?P<keyword>TODO)(?P<end>[: ]? .*)$").unwrap();
+            Regex::new(r"^(?P<prefix>.*)(?P<keyword>TODO)(?P<end>[: ]? .*(\n)?)$").unwrap();
     }
 
     let keyword_with_id = format!("$prefix$keyword(#{})$end", id);
@@ -47,9 +47,25 @@ mod tests {
     }
 
     #[test]
+    fn with_space_and_newline() {
+        assert_eq!(
+            extract_untracked_todo_content("// TODO rewrite everything\n").unwrap(),
+            "rewrite everything"
+        );
+    }
+
+    #[test]
     fn with_colon() {
         assert_eq!(
             extract_untracked_todo_content("// TODO: rewrite everything").unwrap(),
+            "rewrite everything"
+        );
+    }
+
+    #[test]
+    fn with_colon_and_newline() {
+        assert_eq!(
+            extract_untracked_todo_content("// TODO: rewrite everything\n").unwrap(),
             "rewrite everything"
         );
     }
@@ -87,10 +103,26 @@ mod tests {
     }
 
     #[test]
+    fn replace_tracked_without_colon_but_newline() {
+        assert_eq!(
+            replace_untracked_todo("// TODO(#42) write some nasm for fun\n", 42),
+            "// TODO(#42) write some nasm for fun\n"
+        );
+    }
+
+    #[test]
     fn replace_tracked_with_colon() {
         assert_eq!(
             replace_untracked_todo("// TODO(#42): write some nasm for fun", 42),
             "// TODO(#42): write some nasm for fun"
+        );
+    }
+
+    #[test]
+    fn replace_tracked_with_colon_and_newline() {
+        assert_eq!(
+            replace_untracked_todo("// TODO(#42): write some nasm for fun\n", 42),
+            "// TODO(#42): write some nasm for fun\n"
         );
     }
 }

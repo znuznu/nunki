@@ -1,14 +1,14 @@
 use std::fmt;
 
 pub struct Todo {
-    pub id: Option<u32>,
+    pub id: Option<usize>,
     pub file_path: String,
-    pub line: u32,
+    pub line: usize,
     pub content: String,
 }
 
 impl Todo {
-    pub fn from(id: Option<u32>, file_path: String, line: u32, content: String) -> Self {
+    pub fn from(id: Option<usize>, file_path: String, line: usize, content: String) -> Self {
         Todo {
             id,
             file_path,
