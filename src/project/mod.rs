@@ -31,14 +31,14 @@ arg_enum! {
 pub struct Project<'a> {
     mode: Mode,
     entrypoint: &'a str,
-    git_platform: Option<Box<dyn GitPlatform<'a>>>,
+    git_platform: Box<dyn GitPlatform<'a> + 'a>,
 }
 
 impl<'a> Project<'a> {
     pub fn from<T: AsRef<str>>(
         mode: Mode,
         entrypoint: &'a T,
-        git_platform: Option<Box<dyn GitPlatform<'a>>>,
+        git_platform: Box<dyn GitPlatform<'a> + 'a>,
     ) -> Self {
         Project {
             mode,

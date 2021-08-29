@@ -3,7 +3,7 @@ use crate::project::todo::Todo;
 use anyhow::Result;
 use async_trait::async_trait;
 use reqwest::StatusCode;
-use reqwest::{header::HeaderMap, Client};
+use reqwest::{header::HeaderMap, Client as ReqwestClient};
 
 use serde::Deserialize;
 
@@ -14,7 +14,7 @@ struct OpenIssueResponse {
 
 pub struct Github<'a> {
     token: &'a str,
-    client: Client,
+    client: ReqwestClient,
 }
 
 impl<'a> Github<'a> {
@@ -26,7 +26,7 @@ impl<'a> GitPlatform<'a> for Github<'a> {
     fn new(token: &'a str) -> Self {
         Self {
             token,
-            client: Client::new(),
+            client: ReqwestClient::new(),
         }
     }
 

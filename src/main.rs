@@ -1,3 +1,4 @@
+use crate::git::github::Github;
 use crate::git::GitPlatform;
 use crate::project::{Mode, Project};
 use clap::{value_t, App, Arg};
@@ -11,8 +12,7 @@ mod token;
 
 fn main() {
     let token = get_token(Platform::Github);
-
-    // let git_platform = GitPlatform::new(&token);
+    let platform = Github::new(&token);
 
     let matches = App::new("Nunki CLI")
         .version("0.1.0")
@@ -51,7 +51,7 @@ fn main() {
 
         let mode = value_t!(matches, "mode", Mode).unwrap();
 
-        let project: Project = Project::from(mode, &path, None);
+        let project: Project = Project::from(mode, &path, Box::new(platform));
 
         if let Err(e) = project.walk() {
             eprintln!("{}", e);
