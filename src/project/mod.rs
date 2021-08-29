@@ -8,7 +8,7 @@ use walkdir::WalkDir;
 use crate::git::GitPlatform;
 
 use line_iterator::LineIterator;
-use std::fs::File;
+use std::fs::{rename, File};
 use std::io::{BufRead, BufReader, BufWriter};
 
 pub mod line_iterator;
@@ -31,14 +31,14 @@ arg_enum! {
 pub struct Project<'a> {
     mode: Mode,
     entrypoint: &'a str,
-    git_platform: Box<dyn GitPlatform<'a>>,
+    git_platform: Option<Box<dyn GitPlatform<'a>>>,
 }
 
 impl<'a> Project<'a> {
     pub fn from<T: AsRef<str>>(
         mode: Mode,
         entrypoint: &'a T,
-        git_platform: Box<dyn GitPlatform<'a>>,
+        git_platform: Option<Box<dyn GitPlatform<'a>>>,
     ) -> Self {
         Project {
             mode,
@@ -92,7 +92,8 @@ impl<'a> Project<'a> {
         let file = File::open(file_path)?;
         let reader = BufReader::new(file);
 
-        let tmp_file = File::create(format!("{}.tmp", file_path))?;
+        let tmp_file_name = format!("{}.tmp", file_path);
+        let tmp_file = File::create(&tmp_file_name)?;
         let mut writer = BufWriter::new(tmp_file);
 
         for (index, chunk) in LineIterator::new(reader).enumerate() {
@@ -120,6 +121,7 @@ impl<'a> Project<'a> {
         }
 
         writer.flush()?;
+        rename(tmp_file_name, file_path)?;
 
         Ok(())
     }

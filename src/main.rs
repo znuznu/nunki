@@ -12,7 +12,7 @@ mod token;
 fn main() {
     let token = get_token(Platform::Github);
 
-    let git_platform = GitPlatform::new(&token);
+    // let git_platform = GitPlatform::new(&token);
 
     let matches = App::new("Nunki CLI")
         .version("0.1.0")
@@ -51,7 +51,7 @@ fn main() {
 
         let mode = value_t!(matches, "mode", Mode).unwrap();
 
-        let project: Project = Project::from(mode, &path, git_platform);
+        let project: Project = Project::from(mode, &path, None);
 
         if let Err(e) = project.exec() {
             eprintln!("{}", e);
