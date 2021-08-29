@@ -47,10 +47,6 @@ impl<'a> Project<'a> {
         }
     }
 
-    pub fn exec(&self) -> Result<()> {
-        self.walk()
-    }
-
     /// Walk recursively through the provided path and treat TODOs in each file
     /// depending on the mode.
     pub fn walk(&self) -> Result<()> {
@@ -108,6 +104,7 @@ impl<'a> Project<'a> {
 
                 match self.prompt(todo)? {
                     Answer::Yes => {
+                        // TODO use open_issue() in order to get the id
                         let patched_line = regex::replace_untracked_todo(&line, 100);
                         writer.write(&patched_line.as_bytes())?;
                     }

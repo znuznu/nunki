@@ -53,7 +53,7 @@ fn main() {
 
         let project: Project = Project::from(mode, &path, None);
 
-        if let Err(e) = project.exec() {
+        if let Err(e) = project.walk() {
             eprintln!("{}", e);
         }
     }
