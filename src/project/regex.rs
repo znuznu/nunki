@@ -23,7 +23,7 @@ pub fn extract_untracked_todo_content<'a>(
 }
 
 /// Add the provided id to the untracked line
-pub fn replace_untracked_todo(line: &str, id: u32) -> Cow<'_, str> {
+pub fn replace_untracked_todo(line: &str, id: usize) -> Cow<'_, str> {
     lazy_static! {
         static ref RE: Regex =
             Regex::new(r"^(?P<prefix>.*)(?P<keyword>TODO)(?P<end>[: ]? .*(\n)?)$").unwrap();

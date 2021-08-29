@@ -49,7 +49,7 @@ impl<'a> Project<'a> {
 
     /// Walk recursively through the provided path and treat TODOs in each file
     /// depending on the mode.
-    pub fn walk(&self) -> Result<()> {
+    pub async fn walk(&self) -> Result<()> {
         for entry in WalkDir::new(self.entrypoint)
             .into_iter()
             .filter_map(|entry| entry.ok())
@@ -62,7 +62,7 @@ impl<'a> Project<'a> {
 
             match &self.mode {
                 Mode::Match => self.match_file(entrypoint)?,
-                Mode::Patch => self.patch_file(entrypoint)?,
+                Mode::Patch => self.patch_file(entrypoint).await?,
             }
         }
 
@@ -84,7 +84,7 @@ impl<'a> Project<'a> {
         Ok(())
     }
 
-    pub fn patch_file(&self, file_path: &str) -> Result<()> {
+    pub async fn patch_file(&self, file_path: &str) -> Result<()> {
         let file = File::open(file_path)?;
         let reader = BufReader::new(file);
 
@@ -102,10 +102,14 @@ impl<'a> Project<'a> {
 
                 println!();
 
-                match self.prompt(todo)? {
+                match self.prompt(&todo)? {
                     Answer::Yes => {
-                        // TODO use open_issue() in order to get the id
-                        let patched_line = regex::replace_untracked_todo(&line, 100);
+                        // TODO use custom values for owner/repo
+                        let issue_id = self
+                            .git_platform
+                            .open_issue("znuznu", "nunki", todo)
+                            .await?;
+                        let patched_line = regex::replace_untracked_todo(&line, issue_id);
                         writer.write(&patched_line.as_bytes())?;
                     }
                     Answer::No => {
@@ -123,7 +127,7 @@ impl<'a> Project<'a> {
         Ok(())
     }
 
-    fn prompt(&self, todo: Todo) -> Result<Answer> {
+    fn prompt(&self, todo: &Todo) -> Result<Answer> {
         print!(
             "Untracked todo found L{} in {} \nWould you like to open an issue for it on Github ? [y/N] ",
             todo.line, todo.file_path,

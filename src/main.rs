@@ -10,7 +10,8 @@ mod git;
 mod project;
 mod token;
 
-fn main() {
+#[tokio::main]
+async fn main() {
     let token = get_token(Platform::Github);
     let platform = Github::new(&token);
 
@@ -53,7 +54,7 @@ fn main() {
 
         let project: Project = Project::from(mode, &path, Box::new(platform));
 
-        if let Err(e) = project.walk() {
+        if let Err(e) = project.walk().await {
             eprintln!("{}", e);
         }
     }
