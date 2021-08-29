@@ -3,13 +3,24 @@ use crate::project::todo::Todo;
 use anyhow::Result;
 use async_trait::async_trait;
 use reqwest::StatusCode;
-use reqwest::{header::HeaderMap, Client as ReqwestClient};
+use reqwest::{header::HeaderMap, Body, Client as ReqwestClient};
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize)]
 struct OpenIssueResponse {
     number: usize,
+}
+
+#[derive(Serialize)]
+struct OpenIssueRequestBody<'a> {
+    title: &'a str,
+}
+
+impl<'a> OpenIssueRequestBody<'a> {
+    fn from(title: &'a str) -> Self {
+        Self { title }
+    }
 }
 
 pub struct Github<'a> {
@@ -18,7 +29,7 @@ pub struct Github<'a> {
 }
 
 impl<'a> Github<'a> {
-    const API_PREFIX: &'a str = "https://api.github.com/";
+    const API_PREFIX: &'a str = "https://api.github.com";
 }
 
 #[async_trait]
@@ -34,6 +45,11 @@ impl<'a> GitPlatform<'a> for Github<'a> {
         let mut headers: HeaderMap = HeaderMap::new();
         headers.insert("Accept", "application/vnd.github.v3+json".parse()?);
         headers.insert("Authorization", format!("token {}", self.token).parse()?);
+        headers.insert("User-agent", "nunki".parse()?);
+
+        let body = OpenIssueRequestBody::from(&todo.content);
+
+        dbg!(&headers);
 
         let response = self
             .client
@@ -43,20 +59,24 @@ impl<'a> GitPlatform<'a> for Github<'a> {
                 owner,
                 repository
             ))
-            .body(todo.content)
+            .json(&body)
             .headers(headers)
             .send()
             .await?;
+
+        dbg!(&response);
 
         match response.status() {
             StatusCode::CREATED => {
                 let issue = response.json::<OpenIssueResponse>().await?;
                 return Ok(issue.number);
             }
-            _ => panic!(
-                "Unexpected Github response status code: {}",
-                response.status()
-            ),
+            _ => {
+                panic!(
+                    "Unexpected Github response status code: {}",
+                    response.status()
+                )
+            }
         }
     }
 }

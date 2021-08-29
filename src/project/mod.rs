@@ -104,7 +104,7 @@ impl<'a> Project<'a> {
 
                 match self.prompt(&todo)? {
                     Answer::Yes => {
-                        // TODO use custom values for owner/repo
+                        // TODO(#2) use custom values for owner/repo
                         let issue_id = self
                             .git_platform
                             .open_issue("znuznu", "nunki", todo)
