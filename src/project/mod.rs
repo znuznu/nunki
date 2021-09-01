@@ -64,7 +64,7 @@ impl<'a> Project<'a> {
         Ok(())
     }
 
-    pub fn match_file(&self, file_path: &str) -> Result<()> {
+    fn match_file(&self, file_path: &str) -> Result<()> {
         let file = File::open(file_path)?;
         let reader = BufReader::new(file);
 
@@ -79,7 +79,7 @@ impl<'a> Project<'a> {
         Ok(())
     }
 
-    pub async fn patch_file(&self, file_path: &str) -> Result<()> {
+    async fn patch_file(&self, file_path: &str) -> Result<()> {
         let file = File::open(file_path)?;
         let reader = BufReader::new(file);
 

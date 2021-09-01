@@ -25,6 +25,8 @@ pub fn prompt(todo: &Todo) -> Result<Answer> {
             "n" | "" => Ok(Answer::No),
             _ => {
                 print!("Invalid input. [y/N] ");
+                io::stdout().flush().unwrap();
+
                 continue;
             }
         };

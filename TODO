@@ -1,8 +1,9 @@
 [ ] Remove undesired characters (like */)
 [ ] Handle multi-line TODOs
-[ ] Implements Github related part
+[x] Implements Github related part
 [ ] Implements multi-threading in order to read multiple files at the same time
 [ ] Keywords
 [ ] Complete README
 [ ] Handle submodules ?
 [ ] Use tempfile ?
+[ ] Tests
