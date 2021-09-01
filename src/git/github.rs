@@ -3,7 +3,7 @@ use crate::project::todo::Todo;
 use anyhow::Result;
 use async_trait::async_trait;
 use reqwest::StatusCode;
-use reqwest::{header::HeaderMap, Body, Client as ReqwestClient};
+use reqwest::{header::HeaderMap, Client as ReqwestClient};
 
 use serde::{Deserialize, Serialize};
 
@@ -49,8 +49,6 @@ impl<'a> GitPlatform<'a> for Github<'a> {
 
         let body = OpenIssueRequestBody::from(&todo.content);
 
-        dbg!(&headers);
-
         let response = self
             .client
             .post(format!(
@@ -63,8 +61,6 @@ impl<'a> GitPlatform<'a> for Github<'a> {
             .headers(headers)
             .send()
             .await?;
-
-        dbg!(&response);
 
         match response.status() {
             StatusCode::CREATED => {

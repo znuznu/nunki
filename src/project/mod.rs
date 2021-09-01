@@ -1,7 +1,6 @@
 use anyhow::Result;
 use clap::arg_enum;
-use std::io;
-use std::io::Write;
+use prompt::{prompt, Answer};
 use todo::Todo;
 use walkdir::WalkDir;
 
@@ -9,16 +8,12 @@ use crate::git::GitPlatform;
 
 use line_iterator::LineIterator;
 use std::fs::{rename, File};
-use std::io::{BufRead, BufReader, BufWriter};
+use std::io::{BufRead, BufReader, BufWriter, Write};
 
 pub mod line_iterator;
+pub mod prompt;
 pub mod regex;
 pub mod todo;
-
-enum Answer {
-    Yes,
-    No,
-}
 
 arg_enum! {
     #[derive(PartialEq, Debug)]
@@ -102,7 +97,7 @@ impl<'a> Project<'a> {
 
                 println!();
 
-                match self.prompt(&todo)? {
+                match prompt(&todo)? {
                     Answer::Yes => {
                         // TODO(#2) use custom values for owner/repo
                         let issue_id = self
@@ -125,28 +120,5 @@ impl<'a> Project<'a> {
         rename(tmp_file_name, file_path)?;
 
         Ok(())
-    }
-
-    fn prompt(&self, todo: &Todo) -> Result<Answer> {
-        print!(
-            "Untracked todo found L{} in {} \nWould you like to open an issue for it on Github ? [y/N] ",
-            todo.line, todo.file_path,
-        );
-        io::stdout().flush().unwrap();
-
-        loop {
-            let mut answer = String::new();
-
-            io::stdin().read_line(&mut answer)?;
-
-            return match answer.to_lowercase().trim() {
-                "y" => Ok(Answer::Yes),
-                "n" | "" => Ok(Answer::No),
-                _ => {
-                    print!("Invalid input. [y/N] ");
-                    continue;
-                }
-            };
-        }
     }
 }
