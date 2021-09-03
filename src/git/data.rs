@@ -2,7 +2,7 @@ use crate::git::provider::Provider;
 use lazy_static::lazy_static;
 use regex::Regex;
 
-// TODO rename GitData to GitRemote ?
+// TODO(#3) rename GitData to GitRemote ?
 #[derive(Debug)]
 pub struct GitData<'a> {
     provider: Provider,
@@ -22,7 +22,7 @@ impl<'a> GitData<'a> {
     /// URL example: git@github.com:znuznu/nunki.git
     pub fn from_url(remote_url: &'a str) -> Self {
         lazy_static! {
-            // TODO enhance the git remote URL regex
+            // TODO(#4) enhance the git remote URL regex
             static ref RE: Regex = Regex::new(r"^git@(.*)+:(.*)/(.*).git$").unwrap();
         }
 
