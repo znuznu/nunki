@@ -1,4 +1,4 @@
-use crate::git::GitPlatform;
+use crate::git::Git;
 use crate::project::todo::Todo;
 use anyhow::Result;
 use async_trait::async_trait;
@@ -33,7 +33,7 @@ impl<'a> Github<'a> {
 }
 
 #[async_trait]
-impl<'a> GitPlatform<'a> for Github<'a> {
+impl<'a> Git<'a> for Github<'a> {
     fn new(token: &'a str) -> Self {
         Self {
             token,

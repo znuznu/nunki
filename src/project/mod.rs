@@ -4,7 +4,8 @@ use prompt::{prompt, Answer};
 use todo::Todo;
 use walkdir::WalkDir;
 
-use crate::git::GitPlatform;
+use crate::git::data::GitData;
+use crate::git::Git;
 
 use line_iterator::LineIterator;
 use std::fs::{rename, File};
@@ -26,19 +27,22 @@ arg_enum! {
 pub struct Project<'a> {
     mode: Mode,
     entrypoint: &'a str,
-    git_platform: Box<dyn GitPlatform<'a> + 'a>,
+    git_platform: Box<dyn Git<'a> + 'a>,
+    git_data: GitData<'a>,
 }
 
 impl<'a> Project<'a> {
     pub fn from<T: AsRef<str>>(
         mode: Mode,
         entrypoint: &'a T,
-        git_platform: Box<dyn GitPlatform<'a> + 'a>,
+        git_platform: Box<dyn Git<'a> + 'a>,
+        git_data: GitData<'a>,
     ) -> Self {
         Project {
             mode,
             entrypoint: entrypoint.as_ref(),
             git_platform,
+            git_data,
         }
     }
 
@@ -99,10 +103,9 @@ impl<'a> Project<'a> {
 
                 match prompt(&todo)? {
                     Answer::Yes => {
-                        // TODO(#2) use custom values for owner/repo
                         let issue_id = self
                             .git_platform
-                            .open_issue("znuznu", "nunki", todo)
+                            .open_issue(self.git_data.owner, self.git_data.repo, todo)
                             .await?;
                         let patched_line = regex::replace_untracked_todo(&line, issue_id);
                         writer.write(&patched_line.as_bytes())?;
