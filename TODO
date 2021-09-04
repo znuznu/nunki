@@ -3,8 +3,8 @@
 [ ] Handle multi-line TODOs
 [~] Implements multi-threading in order to read multiple files at the same time
 [ ] Keywords
-[ ] Complete README
+[x] Complete README
 [ ] Handle submodules ?
 [ ] Use tempfile ?
 [ ] Tests
-[ ] Custom config file
+[x] Custom config file
