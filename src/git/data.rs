@@ -59,4 +59,16 @@ mod tests {
             }
         );
     }
+
+    #[test]
+    #[should_panic(expected = "Invalid remote URL such_fake")]
+    fn from_invalid_url() {
+        GitData::from_url("such_fake");
+    }
+
+    #[test]
+    #[should_panic(expected = "Unknown git domain.")]
+    fn unknown_domain() {
+        GitData::from_url("git@fake.com:znuznu/nunki.git");
+    }
 }
