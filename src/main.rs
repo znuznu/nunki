@@ -12,7 +12,7 @@ mod project;
 #[tokio::main]
 async fn main() {
     // Extract config from `nunki.toml`
-    let config = Config::new();
+    let config = Config::new("nunki.toml");
 
     // Extract git data from .git/config
     let remote_url = get_remote_url(&config.remote.name);
