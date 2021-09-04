@@ -17,3 +17,4 @@ serde_json = "1.0"
 tokio = { version = "1", features = ["full"] }
 walkdir = "2"
 rust-ini = "0.17.0"
+toml = "0.5.8"

@@ -10,8 +10,8 @@ pub enum Answer {
 
 pub fn prompt(todo: &Todo) -> Result<Answer> {
     print!(
-            "Untracked todo found L{} in {} \nWould you like to open an issue for it on Github ? [y/N] ",
-            todo.line, todo.file_path,
+            "Untracked todo found L{} in {} \n{}\nWould you like to open an issue for it on Github ? [y/N] ",
+            todo.line, todo.file_path, todo.content,
         );
     io::stdout().flush().unwrap();
 

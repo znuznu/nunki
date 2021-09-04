@@ -1,9 +1,10 @@
+[x] Implements Github related part
 [ ] Remove undesired characters (like */)
 [ ] Handle multi-line TODOs
-[x] Implements Github related part
-[ ] Implements multi-threading in order to read multiple files at the same time
+[~] Implements multi-threading in order to read multiple files at the same time
 [ ] Keywords
 [ ] Complete README
 [ ] Handle submodules ?
 [ ] Use tempfile ?
 [ ] Tests
+[ ] Custom config file

@@ -9,7 +9,7 @@ mod project;
 
 #[tokio::main]
 async fn main() {
-    let remote_url = get_remote_url("origin"); // TODO let user set a custom repo
+    let remote_url = get_remote_url("origin"); // TODO(#5) let user set a custom repo
     let git_data = GitData::from_url(&remote_url);
 
     let token = Provider::get_token(Provider::Github);
