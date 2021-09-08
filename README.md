@@ -27,6 +27,13 @@ OPTIONS:
     -p <path>        The source code entrypoint (directory or file).
 ```
 
+## TODOs regex
+There's currently no way to add customs regex.
+
+### Untracked TODO
+
+	^(.*)TODO[: ]? (.*)(\n)?$
+
 ## Configuration file
 A `nunki.toml` file is required at the root of the project.  
 
@@ -46,7 +53,7 @@ name = "origin"
 
 ## References
 * https://docs.github.com/en/rest/reference/issues
-* The project idea is inspired by https://github.com/tsoding/snitch
+* The project is inspired by https://github.com/tsoding/snitch
 
 _Sigma Sagittarii, Latinized from σ Sagittarii; formally named [Nunki](https://en.wikipedia.org/wiki/Sigma_Sagittarii) /ˈnʌŋki/, is the second-brightest star in the constellation of Sagittarius._
 
