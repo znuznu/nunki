@@ -2,16 +2,7 @@ use lazy_static::lazy_static;
 use regex::Regex;
 use std::borrow::Cow;
 
-// pub fn get_untracked_pattern<'a>(keywords: &'a [&'a str]) -> &'a str {
-//     let joined_keywords = keywords.join("|");
-
-//     return format!("^(.*)[{}][: ]? (.*)$", joined_keywords);
-// }
-
-pub fn extract_untracked_todo_content<'a>(
-    line: &'a str,
-    // keywords_pattern: &str,
-) -> Option<&'a str> {
+pub fn extract_untracked_todo_content(line: &str) -> Option<&str> {
     lazy_static! {
         static ref RE: Regex = Regex::new(r"^(.*)TODO[: ]? (.*)(\n)?$").unwrap();
     }
@@ -33,6 +24,13 @@ pub fn replace_untracked_todo(line: &str, id: usize) -> Cow<'_, str> {
 
     RE.replace_all(line, keyword_with_id)
 }
+
+// Later :D
+// pub fn get_untracked_pattern<'a>(keywords: &'a [&'a str]) -> &'a str {
+//     let joined_keywords = keywords.join("|");
+
+//     return format!("^(.*)[{}][: ]? (.*)$", joined_keywords);
+// }
 
 #[cfg(test)]
 mod tests {

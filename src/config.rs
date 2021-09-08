@@ -13,15 +13,19 @@ pub struct Remote {
 
 impl Config {
     pub fn new(file_path: &str) -> Self {
-        let config_content = read_to_string(&file_path).expect(&format!(
-            "Couldn't open `{}` configuration file. Is it missing?",
-            &file_path,
-        ));
+        let config_content = read_to_string(&file_path).unwrap_or_else(|_| {
+            panic!(
+                "Couldn't open `{}` configuration file. Is it missing?",
+                &file_path
+            )
+        });
 
-        let config: Config = toml::from_str(&config_content).expect(&format!(
-            "Couldn't extract config from `{}`. Is it properly settled?",
-            &file_path,
-        ));
+        let config: Config = toml::from_str(&config_content).unwrap_or_else(|_| {
+            panic!(
+                "Couldn't extract config from `{}`. Is it properly settled?",
+                &file_path
+            )
+        });
 
         config
     }
@@ -46,11 +50,7 @@ mod tests {
     #[should_panic(expected = "Couldn't extract config from")]
     fn invalid_file() {
         let dir = tempdir().unwrap();
-
         let file_path = dir.path().join("fake.toml");
-
-        println!("{}", file_path.display());
-
         let mut config_file = File::create(file_path.clone()).unwrap();
 
         if let Err(_) = writeln!(config_file, "[remote]\nnam = \"fake\"") {
@@ -65,11 +65,7 @@ mod tests {
     #[test]
     fn valid_file() {
         let dir = tempdir().unwrap();
-
         let file_path = dir.path().join("fake.toml");
-
-        println!("{}", file_path.display());
-
         let mut config_file = File::create(file_path.clone()).unwrap();
 
         if let Err(_) = writeln!(config_file, "[remote]\nname = \"fake\"") {

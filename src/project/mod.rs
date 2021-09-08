@@ -108,14 +108,14 @@ impl<'a> Project<'a> {
                             .open_issue(self.git_data.owner, self.git_data.repo, todo)
                             .await?;
                         let patched_line = regex::replace_untracked_todo(&line, issue_id);
-                        writer.write(&patched_line.as_bytes())?;
+                        writer.write_all(&patched_line.as_bytes())?;
                     }
                     Answer::No => {
-                        writer.write(&line.as_bytes())?;
+                        writer.write_all(&line.as_bytes())?;
                     }
                 }
             } else {
-                writer.write(&line.as_bytes())?;
+                writer.write_all(&line.as_bytes())?;
             }
         }
 

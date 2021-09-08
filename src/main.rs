@@ -15,7 +15,7 @@ async fn main() {
     let config = Config::new("nunki.toml");
 
     // Extract git data from .git/config
-    let remote_url = get_remote_url(&config.remote.name);
+    let remote_url = get_remote_url(&config.remote.name, &Path::new(".git/config"));
     let git_data = GitData::from_url(&remote_url);
 
     // Find the token related to the provider
