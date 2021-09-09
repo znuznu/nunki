@@ -29,6 +29,7 @@ pub struct Project<'a> {
     entrypoint: &'a str,
     git_platform: Box<dyn Git<'a> + 'a>,
     git_data: GitData<'a>,
+    // ignored:
 }
 
 impl<'a> Project<'a> {

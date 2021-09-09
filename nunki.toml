@@ -1,2 +1,5 @@
 [remote]
 name = "origin"
+
+[ignore]
+paths = [ "src/project/regex.rs" ]

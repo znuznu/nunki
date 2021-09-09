@@ -3,9 +3,9 @@ Technology related
 [ ] Tests
 
 Features
+[ ] Ignore files defined in config file
 [ ] Remove undesired characters (like */)
 [ ] Handle multi-line TODOs
-[ ] Ignore files defined in config file
 [ ] Custom todo regex with keywords
 [ ] Handle submodules ?
 [~] MT in order to read multiple files at the same time 
