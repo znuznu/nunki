@@ -61,6 +61,18 @@ paths = [ "src/folderA/file.rs", "src/folderB" ]
 
 _* required_
 
+# Token
+
+## Github
+
+A Github personal token is needed. Just add it to your `.bashrc`, `.zshrc` or whatever.
+
+__Example__
+
+    export GITHUB_PERSONAL_ACCESS_TOKEN=<token>
+
+See the documentation [here](https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token).
+
 ## References
 * https://docs.github.com/en/rest/reference/issues
 * The project is inspired by https://github.com/tsoding/snitch
