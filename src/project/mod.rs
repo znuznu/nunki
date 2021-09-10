@@ -8,6 +8,7 @@ use std::collections::HashSet;
 use std::fs::{rename, File};
 use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::iter::FromIterator;
+use std::path::Path;
 
 use todo::Todo;
 use walkdir::WalkDir;
@@ -32,7 +33,7 @@ pub struct Project<'a> {
     entrypoint: &'a str,
     git_platform: Box<dyn Git<'a> + 'a>,
     git_data: GitData<'a>,
-    ignored_paths: HashSet<String>,
+    ignored_paths: HashSet<&'a Path>,
 }
 
 impl<'a> Project<'a> {
@@ -41,14 +42,14 @@ impl<'a> Project<'a> {
         entrypoint: &'a T,
         git_platform: Box<dyn Git<'a> + 'a>,
         git_data: GitData<'a>,
-        ignored_paths: Vec<String>,
+        ignored_paths: &[&'a Path],
     ) -> Self {
         Project {
             mode,
             entrypoint: entrypoint.as_ref(),
             git_platform,
             git_data,
-            ignored_paths: HashSet::from_iter(ignored_paths),
+            ignored_paths: HashSet::from_iter(ignored_paths.to_vec()),
         }
     }
 
@@ -57,21 +58,10 @@ impl<'a> Project<'a> {
     pub async fn walk(&self) -> Result<()> {
         for entry in WalkDir::new(self.entrypoint)
             .into_iter()
+            .filter_entry(|entry| !self.ignored_paths.contains(entry.path()))
             .filter_map(|entry| entry.ok())
+            .filter(|entry| entry.path().is_file())
         {
-            match entry.path().to_str() {
-                Some(p) => {
-                    if self.ignored_paths.contains(p) {
-                        continue;
-                    }
-                }
-                None => continue,
-            }
-
-            if !entry.path().is_file() {
-                continue;
-            }
-
             let entrypoint = entry.path().to_str().unwrap();
 
             match &self.mode {
