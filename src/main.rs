@@ -57,8 +57,15 @@ async fn main() {
 
         let mode = value_t!(matches, "mode", Mode).unwrap();
         let platform = Github::new(&token);
+        let paths = match config.ignore {
+            Some(i) => match i.paths {
+                Some(v) => v,
+                None => Vec::new(),
+            },
+            None => Vec::new(),
+        };
 
-        let project: Project = Project::from(mode, &path, Box::new(platform), git_data);
+        let project: Project = Project::from(mode, &path, Box::new(platform), git_data, paths);
 
         if let Err(e) = project.walk().await {
             eprintln!("{}", e);

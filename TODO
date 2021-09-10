@@ -1,9 +1,10 @@
 Technology related
 [ ] Use tempfile ?
 [ ] Tests
+[ ] Replace all String in struct by &str
+[ ] Clean code
 
 Features
-[ ] Ignore files defined in config file
 [ ] Remove undesired characters (like */)
 [ ] Handle multi-line TODOs
 [ ] Custom todo regex with keywords

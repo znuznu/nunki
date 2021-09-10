@@ -42,14 +42,24 @@ A `nunki.toml` file is required at the root of the project.
 __Remote__  
 `<name>*`: the repository remote name 
 
-_* required_
-
 __Example__
 
 ```
 [remote]
 name = "origin"
 ```
+
+__Ignore__  
+`<paths>`: an array containing the paths to exclude
+
+__Example__
+
+```
+[ignore]
+paths = [ "src/folderA/file.rs", "src/folderB" ]
+```
+
+_* required_
 
 ## References
 * https://docs.github.com/en/rest/reference/issues

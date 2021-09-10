@@ -1,15 +1,18 @@
-use anyhow::Result;
-use clap::arg_enum;
-use prompt::{prompt, Answer};
-use todo::Todo;
-use walkdir::WalkDir;
-
 use crate::git::data::GitData;
 use crate::git::Git;
 
-use line_iterator::LineIterator;
+use anyhow::Result;
+use clap::arg_enum;
+use prompt::{prompt, Answer};
+use std::collections::HashSet;
 use std::fs::{rename, File};
 use std::io::{BufRead, BufReader, BufWriter, Write};
+use std::iter::FromIterator;
+
+use todo::Todo;
+use walkdir::WalkDir;
+
+use line_iterator::LineIterator;
 
 pub mod line_iterator;
 pub mod prompt;
@@ -29,7 +32,7 @@ pub struct Project<'a> {
     entrypoint: &'a str,
     git_platform: Box<dyn Git<'a> + 'a>,
     git_data: GitData<'a>,
-    // ignored:
+    ignored_paths: HashSet<String>,
 }
 
 impl<'a> Project<'a> {
@@ -38,22 +41,33 @@ impl<'a> Project<'a> {
         entrypoint: &'a T,
         git_platform: Box<dyn Git<'a> + 'a>,
         git_data: GitData<'a>,
+        ignored_paths: Vec<String>,
     ) -> Self {
         Project {
             mode,
             entrypoint: entrypoint.as_ref(),
             git_platform,
             git_data,
+            ignored_paths: HashSet::from_iter(ignored_paths),
         }
     }
 
-    /// Walk recursively through the provided path and treat TODOs in each file
+    /// Walk recursively through the provided path and process TODOs in each file
     /// depending on the mode.
     pub async fn walk(&self) -> Result<()> {
         for entry in WalkDir::new(self.entrypoint)
             .into_iter()
             .filter_map(|entry| entry.ok())
         {
+            match entry.path().to_str() {
+                Some(p) => {
+                    if self.ignored_paths.contains(p) {
+                        continue;
+                    }
+                }
+                None => continue,
+            }
+
             if !entry.path().is_file() {
                 continue;
             }
